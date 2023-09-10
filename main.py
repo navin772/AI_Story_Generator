@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+from gtts import gTTS
 
 from workflow_text_to_text import generate_story_from_text
 
@@ -46,17 +47,26 @@ if input_type == "Text":
             status_text.update(label="Story created!")
         
         st.markdown("### Your Story based on your input!")
+        st.download_button('Download story as text file', story, 'story.txt')
+
         story_lines = story.split('\n')
         formatted_story = "\n".join(["##### " + line for line in story_lines])
         
         st.markdown(formatted_story)
+        
+        speech = gTTS(text=story, lang='en', slow=False)
+        speech.save("story.mp3")
+        st.audio("story.mp3")
+        st.download_button('Download story as mp3 file', 'story.mp3', 'story.mp3')
+
+
             
 
 if input_type == "Image":
     st.markdown("### Upload the image you want to start with")
-    uploaded_file = st.file_uploader("Choose an image...", type="jpg")
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
     if uploaded_file is not None:
-        st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=False, width=300)    
         if st.button("Generate story"):
             st.write("Story will be generated here")
 
