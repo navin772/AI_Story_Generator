@@ -45,7 +45,7 @@ if input_type == "Text :pencil:":
 
     st.markdown("### Enter the sentences you want to have your story revolve around: ")
 
-    input_text = st.text_area("Enter the text here", height=100)
+    input_text = st.text_area("Enter the text here", height=100, value="As the rain poured down on a quiet, dimly lit street, I found myself standing in front of a quaint bookstore")
 
     theme_based_input = theme_based_prompts[selected_theme] + " " + input_text
 
