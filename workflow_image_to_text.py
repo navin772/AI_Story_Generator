@@ -1,12 +1,20 @@
 import os
-from dotenv import load_dotenv
-load_dotenv('secrets.env')
+import streamlit as st
+# from dotenv import load_dotenv
+# load_dotenv('secrets.env')
 
 
-USER_ID = os.getenv('USER_ID')
-PAT = os.getenv('PAT')
-APP_ID = os.getenv('APP_ID')
-WORKFLOW_ID = os.getenv('WORKFLOW_ID')
+# USER_ID = os.getenv('USER_ID')
+# PAT = os.getenv('PAT')
+# APP_ID = os.getenv('APP_ID')
+# WORKFLOW_ID = os.getenv('WORKFLOW_ID')
+
+# Streamlit secrets
+USER_ID = st.secrets["USER_ID"]
+PAT = st.secrets["PAT"]
+APP_ID = st.secrets["APP_ID"]
+WORKFLOW_ID = st.secrets["WORKFLOW_ID"]
+
 
 IMAGE_URL = 'https://samples.clarifai.com/metro-north.jpg'
 

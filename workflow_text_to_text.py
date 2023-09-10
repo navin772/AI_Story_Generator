@@ -1,14 +1,19 @@
 import os
-from dotenv import load_dotenv
-load_dotenv('secrets.env')
+# from dotenv import load_dotenv
+# load_dotenv('secrets.env')
 import streamlit as st
 
 
-USER_ID = os.getenv('USER_ID')
-PAT = os.getenv('PAT')
-APP_ID = os.getenv('APP_ID')
-WORKFLOW_ID_TEXT = os.getenv('WORKFLOW_ID_TEXT')
+# USER_ID = os.getenv('USER_ID')
+# PAT = os.getenv('PAT')
+# APP_ID = os.getenv('APP_ID')
+# WORKFLOW_ID_TEXT = os.getenv('WORKFLOW_ID_TEXT')
 
+# Streamlit secrets
+USER_ID = st.secrets["USER_ID"]
+PAT = st.secrets["PAT"]
+APP_ID = st.secrets["APP_ID"]
+WORKFLOW_ID_TEXT = st.secrets["WORKFLOW_ID_TEXT"]
 
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
