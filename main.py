@@ -30,7 +30,8 @@ theme_based_prompts = {
     "Science Fiction": "Write a science fiction story using: "
 }
 
-st.markdown("# AI Story Generator :book:")
+st.markdown("# WordWhiz :closed_book:")
+st.markdown("## AI Story Generator :book:")
 
 with st.expander("About this app :bulb:", expanded=False):
     st.markdown("#### This app uses the **Clarifai AI** engine to generate stories based on the input you provide using **LLM** models. You can either upload an image or enter some text to get started. The app will then generate a story based on the input you provide. The story will be generated using the theme you choose, you can select the theme from the sidebar. The app will also generate an **audio file** of the story for you to listen to. You can **download the story as a text file or an audio file (audio from the three-dot menu)**.")
