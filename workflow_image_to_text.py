@@ -15,7 +15,7 @@ from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 
-def generate_story():
+def generate_story(image):
 
     channel = ClarifaiChannel.get_grpc_channel()
     stub = service_pb2_grpc.V2Stub(channel)
@@ -32,7 +32,8 @@ def generate_story():
                 resources_pb2.Input(
                     data=resources_pb2.Data(
                         image=resources_pb2.Image(
-                            url=IMAGE_URL
+                            # url=IMAGE_URL
+                            base64=image
                         )
                     )
                 )

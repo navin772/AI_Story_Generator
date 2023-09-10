@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 load_dotenv('secrets.env')
+import streamlit as st
 
 
 USER_ID = os.getenv('USER_ID')
@@ -13,6 +14,7 @@ from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 
+@st.cache_data(persist=True)
 def generate_story_from_text(user_input):
 
     channel = ClarifaiChannel.get_grpc_channel()
