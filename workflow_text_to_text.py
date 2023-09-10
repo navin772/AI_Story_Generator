@@ -1,13 +1,5 @@
 import os
-# from dotenv import load_dotenv
-# load_dotenv('secrets.env')
 import streamlit as st
-
-
-# USER_ID = os.getenv('USER_ID')
-# PAT = os.getenv('PAT')
-# APP_ID = os.getenv('APP_ID')
-# WORKFLOW_ID_TEXT = os.getenv('WORKFLOW_ID_TEXT')
 
 # Streamlit secrets
 USER_ID = st.secrets["USER_ID"]
