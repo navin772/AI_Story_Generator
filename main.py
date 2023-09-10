@@ -1,8 +1,8 @@
 import streamlit as st
-import os
 from gtts import gTTS
 
 from workflow_text_to_text import generate_story_from_text
+from workflow_image_to_text import generate_image_caption, generate_story_from_image_caption
 
 @st.cache_data(persist=True)
 def generate_audio_from_story(text):
@@ -37,7 +37,7 @@ with st.expander("About this app :bulb:", expanded=False):
 
 st.markdown("## Choose the input type for generating the story")
 
-input_type = st.radio("Input type", ("Text :pencil:", "Image"))
+input_type = st.radio("Input type", ("Text :pencil:", "Image :camera:"))
 
 if input_type == "Text :pencil:":
 
@@ -76,16 +76,50 @@ if input_type == "Text :pencil:":
             status_audio.update(label="Audio generated...")
         
         st.audio("story.mp3")
-        st.download_button('Download story as mp3 file', 'story.mp3', 'story.mp3')
 
 
-            
 
-if input_type == "Image":
-    st.markdown("### Upload the image you want to start with")
+if input_type == "Image :camera:":
+
+    st.markdown("### Upload the image you want your story to be based on:")
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
-    if uploaded_file is not None:
-        st.image(uploaded_file, caption="Uploaded Image", use_column_width=False, width=300)    
-        if st.button("Generate story"):
-            st.write("Story will be generated here")
 
+    if uploaded_file is not None:
+
+        st.image(uploaded_file, caption="Uploaded Image", use_column_width=False, width=500)   
+
+        if st.button("Generate story"):
+            with st.status("Generating story...", expanded=True) as status_text:
+
+                st.write("Fusing your photo elements together to create a story...")
+                st.write("This may take about 30-40 seconds (more if runnung the first time), please hang tight...")
+
+                # make uploaded_file into a file-like object
+                file_bytes = uploaded_file.read()
+
+                caption = generate_image_caption(file_bytes)
+                theme_based_input = theme_based_prompts[selected_theme] + " " + caption
+
+                story = generate_story_from_image_caption(theme_based_input)
+
+                status_text.update(label="Story created!")
+            
+            st.markdown("### Your Story based on the image!")
+            st.download_button('Download story as text file', story, 'story.txt')
+
+            story_lines = story.split('\n')
+            formatted_story = "\n".join(["##### " + line for line in story_lines])
+            
+            with st.expander("View story", expanded=True):
+                st.markdown(formatted_story)
+            
+            with st.status("Generating audio...", expanded=True) as status_audio:
+
+                st.write("Generating your audio file...")
+                st.write("This may take about 10-20 seconds")
+
+                generate_audio_from_story(story)
+                
+                status_audio.update(label="Audio generated...")
+            
+            st.audio("story.mp3")

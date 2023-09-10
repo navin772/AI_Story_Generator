@@ -1,21 +1,19 @@
-import os
 import streamlit as st
 
 # Streamlit secrets
 USER_ID = st.secrets["USER_ID"]
 PAT = st.secrets["PAT"]
 APP_ID = st.secrets["APP_ID"]
-WORKFLOW_ID = st.secrets["WORKFLOW_ID"]
-
-
-IMAGE_URL = 'https://samples.clarifai.com/metro-north.jpg'
+WORKFLOW_ID_IMAGE = st.secrets["WORKFLOW_ID_IMAGE"]
+WORKFLOW_ID_STORY_GPT3 = st.secrets["WORKFLOW_ID_STORY_GPT3"]
 
 
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 
-def generate_story(image):
+@st.cache_data(persist=True)
+def generate_image_caption(image):
 
     channel = ClarifaiChannel.get_grpc_channel()
     stub = service_pb2_grpc.V2Stub(channel)
@@ -27,7 +25,7 @@ def generate_story(image):
     post_workflow_results_response = stub.PostWorkflowResults(
         service_pb2.PostWorkflowResultsRequest(
             user_app_id=userDataObject,  
-            workflow_id=WORKFLOW_ID,
+            workflow_id=WORKFLOW_ID_IMAGE,
             inputs=[
                 resources_pb2.Input(
                     data=resources_pb2.Data(
@@ -48,18 +46,39 @@ def generate_story(image):
     # We'll get one WorkflowResult for each input we used above. Because of one input, we have here one WorkflowResult
     results = post_workflow_results_response.results[0]
 
-    # Each model we have in the workflow will produce one output.
-    for output in results.outputs:
-        model = output.model
+    return results.outputs[0].data.text.raw
 
-        print("Predicted concepts for the model `%s`" % model.id)
-        for concept in output.data.concepts:
-            print("	%s %.2f" % (concept.name, concept.value))
+@st.cache_data(persist=True)
+def generate_story_from_image_caption(image_caption_with_user_input):
 
-    # Uncomment this line to print the full Response JSON
-    print(results)
+    channel = ClarifaiChannel.get_grpc_channel()
+    stub = service_pb2_grpc.V2Stub(channel)
 
-    #save results in a text file
-    with open('results.txt', 'w') as f:
-        print(results, file=f)
+    userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
+    metadata = (('authorization', 'Key ' + PAT),)
 
+    post_workflow_results_response = stub.PostWorkflowResults(
+        service_pb2.PostWorkflowResultsRequest(
+            user_app_id=userDataObject,  
+            workflow_id=WORKFLOW_ID_STORY_GPT3,
+            inputs=[
+                resources_pb2.Input(
+                    data=resources_pb2.Data(
+                        text=resources_pb2.Text(
+                            # url=TEXT_FILE_URL
+                            raw=image_caption_with_user_input
+                        )
+                    )
+                )
+            ]
+        ),
+        metadata=metadata
+    )
+    if post_workflow_results_response.status.code != status_code_pb2.SUCCESS:
+        print(post_workflow_results_response.status)
+        raise Exception("Post workflow results failed, status: " + post_workflow_results_response.status.description)
+
+    # We'll get one WorkflowResult for each input we used above. Because of one input, we have here one WorkflowResult
+    results = post_workflow_results_response.results[0]
+
+    return results.outputs[0].data.text.raw
