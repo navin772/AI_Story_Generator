@@ -79,6 +79,11 @@ if input_type == "Text :pencil:":
             status_audio.update(label="Audio generated...")
         
         st.audio("story.mp3")
+        # Create download button for the audio file
+        with open("story.mp3", "rb") as f:
+            audio_bytes = f.read()
+        
+        st.download_button('Download story as audio file', audio_bytes, 'story.mp3')
 
 
 
@@ -126,3 +131,8 @@ if input_type == "Image :camera:":
                 status_audio.update(label="Audio generated...")
             
             st.audio("story.mp3")
+            # Create download button for the audio file
+            with open("story.mp3", "rb") as f:
+                audio_bytes = f.read()
+            
+            st.download_button('Download story as audio file', audio_bytes, 'story.mp3')
