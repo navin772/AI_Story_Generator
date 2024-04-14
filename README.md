@@ -7,3 +7,4 @@ This uses [Clarifai's API](https://www.clarifai.com/) to access the models like 
 ## Access the streamlit web application
 
 You can try out the application here - https://wordwhiz.streamlit.app/
+(The application may not load if it has exceeded the free tier usage limit)
